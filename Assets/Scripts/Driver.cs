@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class Driver : MonoBehaviour
 {
-    [SerializeField] float steerSpeed;
-    [SerializeField] float moveSpeed;
+    [SerializeField] float steerSpeed, moveSpeed, delayOfDestroy;
+    [SerializeField] float boostSpeed = 25f;
+    [SerializeField] float slowSpeed = 10f;
+    [SerializeField] Color32 hasPackageColor, noPackageColor = new Color32(1, 1, 1, 1);
+
+    SpriteRenderer spriteRenderer;
+
+    bool hasPackage;
 
     void Start()
     {
-
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -28,6 +34,26 @@ public class Driver : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Got it!");
+        if (other.tag == "Package" && !hasPackage)
+        {
+            spriteRenderer.color = hasPackageColor;
+            Debug.Log("Got it!");
+            hasPackage = true;
+            Destroy(other.gameObject, delayOfDestroy);
+        }
+        if (other.tag == "Customer" && hasPackage)
+        {
+            spriteRenderer.color = noPackageColor;
+            Debug.Log("Here it is, sir!");
+            hasPackage = false;
+        }
+        if (other.name == "Speed-up")
+        {
+            moveSpeed = boostSpeed;
+        }
+        if (other.name == "Slow-down")
+        {
+            moveSpeed = slowSpeed;
+        }
     }
 }
